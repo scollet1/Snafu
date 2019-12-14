@@ -11,15 +11,12 @@ import (
     "github.com/google/gopacket/layers"
 )
 
-const TCP_FLAG  = 0b00000001
-const UDP_FLAG  = 0b00000010
-const ICMP_FLAG = 0b00000100
-
 type Opts struct {
-	snaplen int32
-	protocol int
-	promiscuous bool
-	timeout time.Duration
+	Device string
+	Snaplen int32
+	Protocol string
+	Promiscuous bool
+	Timeout time.Duration
 }
 
 type Status struct {
@@ -44,30 +41,30 @@ type Device struct {
 type Sniffer struct {
 	Status Status
 	device Device
-	options Opts
+	options *Opts
 	layers Layers
 	packsrc *gopacket.PacketSource
 	Mux sync.Mutex
 }
 
-func handle_ethl(layer gopacket.LayerType) {
-	fmt.Println("what up\n")
+func handle_ethl(layer layers.Ethernet) {
+	fmt.Println(layer)
 }
 
-func handle_ip4l(layer gopacket.LayerType) {
-	fmt.Println("what up\n")
+func handle_ip4l(layer layers.IPv4) {
+	fmt.Println(layer.SrcIP)
 }
 
-func handle_ip6l(layer gopacket.LayerType) {
-	fmt.Println("what up\n")
+func handle_ip6l(layer layers.IPv6) {
+	fmt.Println(layer)
 }
 
-func handle_tpcl(layer gopacket.LayerType) {
-	fmt.Println("what up\n")
+func handle_tpcl(layer layers.TCP) {
+	fmt.Println(layer.SrcPort)
 }
 
-func handle_udpl(layer gopacket.LayerType) {
-	fmt.Println("what up\n")
+func handle_udpl(layer layers.UDP) {
+	fmt.Println(layer)
 }
 
 func Sniff(sniffer *Sniffer) {
@@ -79,6 +76,7 @@ func Sniff(sniffer *Sniffer) {
 				&sniffer.layers.ip4l,
 				&sniffer.layers.ip6l,
 				&sniffer.layers.tcpl,
+				&sniffer.layers.udpl,
 			)
 
 			found := []gopacket.LayerType{}
@@ -86,19 +84,19 @@ func Sniff(sniffer *Sniffer) {
 
 			for _, layer := range found {
 				if layer == layers.LayerTypeEthernet {
-					handle_ethl(layer)
+					// handle_ethl(sniffer.layers.ethl)
+
 				} else if layer == layers.LayerTypeIPv4 {
-					handle_ip4l(layer)
+					handle_ip4l(sniffer.layers.ip4l)
+				
 				} else if layer == layers.LayerTypeIPv6 {
-					handle_ip6l(layer)
+					handle_ip6l(sniffer.layers.ip6l)
+				
 				} else if layer == layers.LayerTypeTCP {
-					if sniffer.options.protocol & TCP_FLAG != 0 {
-						handle_tpcl(layer)
-					}
+					handle_tpcl(sniffer.layers.tcpl)
+				
 				} else if layer == layers.LayerTypeUDP {
-					if sniffer.options.protocol & UDP_FLAG != 0 {
-						handle_udpl(layer)
-					}
+					handle_udpl(sniffer.layers.udpl)
 				} // TODO: handle ICMP
 			}
 		}
@@ -107,7 +105,7 @@ func Sniff(sniffer *Sniffer) {
 
 func Init_Sniffer(options *Opts) *Sniffer {
 	var sniffer *Sniffer = new(Sniffer)
-	// apply_user_opts(options, sniffer)
+	sniffer.options = options
 	sniffer.Status.Running = true
 	return sniffer
 }
