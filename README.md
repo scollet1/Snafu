@@ -12,6 +12,7 @@ I am learning Golang
 ## Install
 
 ### Installing Golang
+[Walkthrough](https://golang.org/doc/install) to installing Go on your system.
 
 ### Installing Snafu
 `./install`
