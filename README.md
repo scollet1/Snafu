@@ -1,4 +1,4 @@
-# GoS
+# Snafu
 Go Packet Sniffer
 
 # What
