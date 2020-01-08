@@ -15,7 +15,7 @@ I am learning Golang
 [Walkthrough](https://golang.org/doc/install) to installing Go on your system.
 
 ### Installing Snafu
-Depending on your system you may need to install libpcap.
+Depending on your system you may need to install libpcap. [This](https://askubuntu.com/questions/347788/how-can-i-install-libpcap-header-files-on-ubuntu-12-04) is what I did for Linux Mint.
 
 `./install` should build the snafu binary in the src/snafu directory.
 
