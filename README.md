@@ -15,7 +15,9 @@ I am learning Golang
 [Walkthrough](https://golang.org/doc/install) to installing Go on your system.
 
 ### Installing Snafu
-`./install`
+Depending on your system you may need to install libpcap.
+
+`./install` should build the snafu binary in the src/snafu directory.
 
 ## Run
 Running Snafu requires root privileges because we are reading promiscuously from raw sockets
@@ -35,3 +37,4 @@ Snafu can listen with custom configurations including device, promiscuous mode, 
 
 Snafu works by finding the first valid device (by default I have it set to wireless because my laptop doesn't have an ethernet port) if none is targeted on the command line. It validates the device by returning a device handle, then attempts to apply a BPF command. After that it listens on the device and endlessly enumerates all packets until the end of time (or the user exits the program), stripping relevant headers and doing whatever needs to be done with them.
 
+[Here](https://www.devdungeon.com/content/packet-capture-injection-and-analysis-gopacket) is a great resource for working with gopacket.
